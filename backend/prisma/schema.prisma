@@ -13,6 +13,107 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// ============================================================================
+// CANDIDATE MANAGEMENT SYSTEM - DESIGNED BY DB AGENT
+// ============================================================================
+
+model Candidate {
+  id          Int       @id @default(autoincrement())
+  firstName   String    @map("first_name") @db.VarChar(100)
+  lastName    String    @map("last_name") @db.VarChar(100)
+  email       String    @unique @db.VarChar(255)
+  phone       String?   @db.VarChar(20)
+  address     String?   @db.Text
+  status      String    @default("active") @db.VarChar(50) // active, in_review, hired, rejected, archived
+  notes       String?   @db.Text
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+  
+  // Relaciones
+  education   CandidateEducation[]
+  experience  CandidateExperience[]
+  documents   CandidateDocument[]
+  
+  // Índices para optimización
+  @@index([email])
+  @@index([status])
+  @@index([createdAt])
+  @@index([lastName, firstName]) // Búsqueda por nombre completo
+  @@map("candidates")
+}
+
+model CandidateEducation {
+  id            Int       @id @default(autoincrement())
+  candidateId   Int       @map("candidate_id")
+  institution   String    @db.VarChar(255)
+  degree        String?   @db.VarChar(255)
+  fieldOfStudy  String?   @map("field_of_study") @db.VarChar(255)
+  startDate     DateTime? @map("start_date") @db.Date
+  endDate       DateTime? @map("end_date") @db.Date
+  isCurrent     Boolean   @default(false) @map("is_current")
+  gpa           Decimal?  @db.Decimal(3, 2) // GPA opcional (ej: 3.85)
+  description   String?   @db.Text
+  createdAt     DateTime  @default(now()) @map("created_at")
+  
+  // Relación con candidato
+  candidate     Candidate @relation(fields: [candidateId], references: [id], onDelete: Cascade)
+  
+  // Índices
+  @@index([candidateId])
+  @@index([institution])
+  @@map("candidate_education")
+}
+
+model CandidateExperience {
+  id           Int       @id @default(autoincrement())
+  candidateId  Int       @map("candidate_id")
+  company      String    @db.VarChar(255)
+  position     String    @db.VarChar(255)
+  department   String?   @db.VarChar(255)
+  location     String?   @db.VarChar(255)
+  description  String?   @db.Text
+  startDate    DateTime? @map("start_date") @db.Date
+  endDate      DateTime? @map("end_date") @db.Date
+  isCurrent    Boolean   @default(false) @map("is_current")
+  salary       Decimal?  @db.Decimal(12, 2) // Salario opcional
+  currency     String?   @db.VarChar(3) // USD, EUR, etc.
+  createdAt    DateTime  @default(now()) @map("created_at")
+  
+  // Relación con candidato
+  candidate    Candidate @relation(fields: [candidateId], references: [id], onDelete: Cascade)
+  
+  // Índices
+  @@index([candidateId])
+  @@index([company])
+  @@index([position])
+  @@map("candidate_experience")
+}
+
+model CandidateDocument {
+  id           Int      @id @default(autoincrement())
+  candidateId  Int      @map("candidate_id")
+  fileName     String   @map("file_name") @db.VarChar(255)
+  originalName String   @map("original_name") @db.VarChar(255)
+  filePath     String   @map("file_path") @db.VarChar(500)
+  fileType     String   @map("file_type") @db.VarChar(50) // pdf, docx, etc.
+  fileSize     Int?     @map("file_size") // en bytes
+  mimeType     String   @map("mime_type") @db.VarChar(100)
+  documentType String   @default("cv") @map("document_type") @db.VarChar(50) // cv, cover_letter, portfolio, other
+  uploadedAt   DateTime @default(now()) @map("uploaded_at")
+  
+  // Relación con candidato
+  candidate    Candidate @relation(fields: [candidateId], references: [id], onDelete: Cascade)
+  
+  // Índices
+  @@index([candidateId])
+  @@index([documentType])
+  @@index([uploadedAt])
+  @@map("candidate_documents")
+}
+
+// ============================================================================
+// LEGACY USER MODEL (mantenido para compatibilidad)
+// ============================================================================
 model User {
   id    Int     @id @default(autoincrement())
   email String  @unique
