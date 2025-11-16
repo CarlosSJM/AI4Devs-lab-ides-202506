@@ -2,7 +2,7 @@
 **/.DS_Store
 #**/.env
 **/.env.example
-**/node_modules
+**/node_modules/
 **/prompts_master.md
 
 # other dependencies
@@ -13,8 +13,8 @@
 /coverage
 
 # production
-**/build
-**/dist
+**/build/
+**/dist/
 
 # logs
 npm-debug.log*
