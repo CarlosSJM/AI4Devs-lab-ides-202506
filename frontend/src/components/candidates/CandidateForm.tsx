@@ -63,6 +63,12 @@ export const CandidateForm: React.FC<CandidateFormProps> = ({
     },
   });
 
+  // Helper to get input props without the error property
+  const getInputProps = (fieldName: keyof CreateCandidateDto) => {
+    const { error, ...inputProps } = form.getFieldProps(fieldName);
+    return inputProps;
+  };
+
   // Education management
   const addEducation = () => {
     const newEducation: CreateCandidateEducationDto = {
@@ -153,7 +159,7 @@ export const CandidateForm: React.FC<CandidateFormProps> = ({
             <div className="form-field">
               <label htmlFor="firstName" className="form-label">Nombre *</label>
               <input
-                {...form.getFieldProps('firstName')}
+                {...getInputProps('firstName')}
                 type="text"
                 id="firstName"
                 className={`form-input ${form.errors.firstName ? 'error' : ''}`}
@@ -167,7 +173,7 @@ export const CandidateForm: React.FC<CandidateFormProps> = ({
             <div className="form-field">
               <label htmlFor="lastName" className="form-label">Apellido *</label>
               <input
-                {...form.getFieldProps('lastName')}
+                {...getInputProps('lastName')}
                 type="text"
                 id="lastName"
                 className={`form-input ${form.errors.lastName ? 'error' : ''}`}
@@ -183,7 +189,7 @@ export const CandidateForm: React.FC<CandidateFormProps> = ({
             <div className="form-field">
               <label htmlFor="email" className="form-label">Email *</label>
               <input
-                {...form.getFieldProps('email')}
+                {...getInputProps('email')}
                 type="email"
                 id="email"
                 className={`form-input ${form.errors.email ? 'error' : ''}`}
@@ -197,7 +203,7 @@ export const CandidateForm: React.FC<CandidateFormProps> = ({
             <div className="form-field">
               <label htmlFor="phone" className="form-label">Teléfono</label>
               <input
-                {...form.getFieldProps('phone')}
+                {...getInputProps('phone')}
                 type="tel"
                 id="phone"
                 className="form-input"
@@ -209,7 +215,7 @@ export const CandidateForm: React.FC<CandidateFormProps> = ({
           <div className="form-field mt-md">
             <label htmlFor="address" className="form-label">Dirección</label>
             <textarea
-              {...form.getFieldProps('address')}
+              {...getInputProps('address')}
               id="address"
               rows={3}
               className="form-input"
@@ -220,7 +226,7 @@ export const CandidateForm: React.FC<CandidateFormProps> = ({
           <div className="form-field mt-md">
             <label htmlFor="notes" className="form-label">Notas</label>
             <textarea
-              {...form.getFieldProps('notes')}
+              {...getInputProps('notes')}
               id="notes"
               rows={3}
               className="form-input"

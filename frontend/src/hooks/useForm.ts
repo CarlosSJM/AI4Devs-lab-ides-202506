@@ -100,17 +100,22 @@ export function useForm<T extends Record<string, any>>({
   }, []);
 
   // Get field props for easy integration
-  const getFieldProps = useCallback((name: keyof T) => ({
-    value: values[name] ?? '',
-    onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-      const value = e.target.type === 'checkbox' 
-        ? (e.target as HTMLInputElement).checked 
-        : e.target.value;
-      handleChange(name, value);
-    },
-    onBlur: () => handleBlur(name),
-    error: touched[name] && errors[name],
-  }), [values, handleChange, handleBlur, touched, errors]);
+  const getFieldProps = useCallback((name: keyof T) => {
+    const fieldValue = values[name];
+    const stringValue = (typeof fieldValue === 'string') ? fieldValue : '';
+    
+    return {
+      value: stringValue,
+      onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+        const value = e.target.type === 'checkbox' 
+          ? (e.target as HTMLInputElement).checked 
+          : e.target.value;
+        handleChange(name, value);
+      },
+      onBlur: () => handleBlur(name),
+      error: touched[name] && errors[name],
+    };
+  }, [values, handleChange, handleBlur, touched, errors]);
 
   return {
     // Form state
